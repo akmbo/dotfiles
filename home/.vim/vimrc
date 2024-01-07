@@ -1,0 +1,107 @@
+" ============================================================================
+" Plugins
+" ============================================================================
+
+call plug#begin('~/.vim/plugged')
+
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+
+call plug#end()
+
+" ============================================================================
+" Basics
+" ============================================================================
+
+set mouse=a                 " enable mouse support
+set number relativenumber   " enable relative line numbers
+set ignorecase              " search case-insensitive
+set smartcase               " search case-insensitive if all lowercase
+set showmatch               " bracket highlighting in insert mode
+set incsearch               " enable incremental searching
+set encoding=utf-8          " use utf-8 encoding
+set cursorline              " highlight current line
+set nocompatible            " stop vim from behaving like vi
+set ttimeoutlen=50          " sets key code sequence timeout to 50ms
+set clipboard=unnamedplus   " sets default clipboard to the system clipboard
+set fileformat=unix         " use unix-style line endings
+set hlsearch                " enable search highlighting
+set splitbelow splitright   " split new windows to left or right
+
+set tabstop=4               " tab character width
+set softtabstop=4           " whitespace added or removed with tab or backspace
+set shiftwidth=4            " whitespace used for one level of indentation
+set expandtab               " use space instead of tab character
+set autoindent              " autoindent new lines
+
+syntax on                   " enable syntax
+filetype on                 " enable file type detection
+filetype plugin on          " enable plugins for the detected file type
+filetype indent on          " load indent file for the detected file type
+
+set path+=**                        " enable recursive searching
+set wildmode=longest:full,full      " enable auto-completion
+set wildmenu                        " enable better command-line completion
+
+" ============================================================================
+" Colors
+" ============================================================================
+
+if !has('gui_running')
+    set t_Co=256                " use 256-color palette in terminal
+endif
+set termguicolors               " enable full rgb
+colorscheme catppuccin_mocha    " set vim cholorscheme
+
+" ============================================================================
+" Commands & Aliases
+" ============================================================================
+
+" set spacebar to leader
+let mapleader = "\<Space>"
+
+" open netrw file explorer
+noremap <leader>pv :Ex<CR>
+
+" center screen after moving up/down and searching
+nnoremap <C-u> <C-u>zz
+nnoremap <C-d> <C-d>zz
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+" replace all aliased to S
+noremap S :%s//g<Left><Left>
+
+" disable auto commenting on newline
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+" copy selected text to system clipboard (requires gvim/nvim/vim-x11 installed)
+" requires xterm_clipboard to be enabled (vim --version | grep xterm_clipboard)
+vnoremap <C-c> "+y
+map <C-p> "+P
+
+" remove trailing whitespace on save
+autocmd BufWritePre * :%s/\s\+$//e
+
+" put without overwriting yank
+vnoremap p "_dP
+
+" run ctags from vim, requires ctags installed
+command! MakeTags !ctags -R .
+noremap <expr> <leader>mt :MakeTags<CR>
+
+" tweaks for browsing
+let g:netrw_banner=0                            " disabled banner
+let g:netrw_browse_split=4                      " open in prior window
+let g:netrw_altv=1                              " open splits to the right
+let g:netrw_liststyle=3                         " tree view
+let g:netrw_list_hide=netrw_gitignore#Hide()    "
+let g:netrw_list_hide.=',\(^\|\s\s\)zs\.\S"'    "
+
+" ============================================================================
+" Notes
+" ============================================================================
+
+" <C-x><C-n>        autocomplete from just this file
+" <C-x><C-f>        autocomplete file path
+" <C-x><C-]>        autocomplete tag
+

@@ -1,0 +1,47 @@
+#!/bin/bash
+
+readonly DOTFILES_DIR="$HOME/dotfiles"
+readonly SCRIPT_DIR=$(dirname $(readlink -f "$0"))
+
+# ============================================================================
+# Symlink files
+# ============================================================================
+
+shopt -s dotglob
+
+echo "Symlinking files..."
+
+for file in $DOTFILES_DIR/home/*; do
+    filename=$(echo $file | rev | cut -d'/' -f-1 | rev)
+    ln -sf "$file" "$HOME"
+    echo "Created symlink to $filename in home directory."
+done
+
+for file in $DOTFILES_DIR/config/*; do
+    filename=$(echo $file | rev | cut -d'/' -f-1 | rev)
+    ln -sf "$file" "$HOME/.config"
+    echo "Created symlink to $filename in .config directory."
+done
+
+echo "...done."
+
+shopt -u dotglob
+
+# ============================================================================
+# Install packages
+# ============================================================================
+
+packages="exuberant-ctags"
+
+echo "Installing packages..."
+sudo apt-get update
+sudo apt-get -y --ignore-missing install $packages
+echo "...done"
+
+# install vim-plug
+if [ ! -f $HOME/.vim/autoload/plug.vim ]; then
+    curl -fLo $HOME/.vim/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    vim +PlugInstall +qall
+fi
+
