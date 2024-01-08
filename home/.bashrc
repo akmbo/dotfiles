@@ -25,8 +25,9 @@ bconf() {
 # "config" to cd to dotfiles; "config [OPTIONS]" to run git commands
 # "config addall" to add all tracked files with changes
 config() {
-    [ $# -eq 0 ] && cd "$DOT_HOME"
-    if [ $# -eq 1 ]; then
+    if [ $# -eq 0 ]; then
+        cd "$DOT_HOME"
+    elif [ $# -eq 1 ]; then
         if [ $1 = "addall" ]; then
             git -C "$DOT_HOME" ls-files --modified | xargs git -C "$DOT_HOME" add
         else
