@@ -15,36 +15,26 @@ export VISUAL=vim                       # set preferred visual editor to vim
 # "bconf" to open; "bconf so" to source
 bconf() {
     if [ $# -eq 1 ]; then
-        [ $1 = "so" ] && source $HOME/.bashrc
+        [ $1 = "so" ] && source "$HOME/.bashrc"
     else
-        "${EDITOR:-vi}" $HOME/.bashrc
+        "${EDITOR:-vi}" "$HOME/.bashrc"
     fi
 }
 
 # function to access dotfiles repo from anywhere in the filesystem
 # "config" to cd to dotfiles; "config [OPTIONS]" to run git commands
+# "config addall" to add all tracked files with changes
 config() {
-    [ $# -eq 0 ] && cd $DOT_HOME
-    local git_cmd=$1
+    [ $# -eq 0 ] && cd "$DOT_HOME"
     if [ $# -eq 1 ]; then
-        git -C "$DOT_HOME" $git_cmd
-        continue
-    fi
-    shift
-    for arg in "$@"; do
-        if [ -L "$arg" ]; then
-            local resolved_path=$(readlink -f "$arg")
-            if [[ "$resolved_path" == "$DOT_HOME"* ]]; then
-                git -C "$DOT_HOME" $git_cmd "${resolved_path#$DOT_HOME/}"
-            else
-                echo "The file $arg is not a symlink to a file in the $DOT_HOME."
-                return 1
-            fi
+        if [ $1 = "addall" ]; then
+            git -C "$DOT_HOME" ls-files --modified | xargs git -C "$DOT_HOME" add
         else
-            echo "The file $arg is not a symlink."
-            return 1
+            git -C "$DOT_HOME" $1
         fi
-    done
+    else
+        git -C "$DOT_HOME" "$@"
+    fi
     return 0
 }
 
