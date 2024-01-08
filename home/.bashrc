@@ -22,9 +22,9 @@ bconf() {
 }
 
 # function to access dotfiles repo from anywhere in the filesystem
-# "config" to cd to dotfiles; "config [OPTIONS]" to run git commands
-# "config addall" to add all tracked files with changes
-config() {
+# "dot" to cd to dotfiles; "dot [OPTIONS]" to run git commands
+# "dot addall" to add all tracked files with changes
+dot() {
     if [ $# -eq 0 ]; then
         cd "$DOT_HOME"
     elif [ $# -eq 1 ]; then
