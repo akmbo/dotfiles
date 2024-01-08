@@ -1,0 +1,10 @@
+add_newline = false     # don't print a new line at the start of the prompt
+
+[line_break]
+disabled = true         # make prompt a single line
+
+[package]
+disabled = true         # disable the package module, hiding it from the prompt
+
+[python]
+symbol = ""

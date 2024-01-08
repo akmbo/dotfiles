@@ -47,3 +47,8 @@ if [ ! -f $HOME/.vim/autoload/plug.vim ]; then
     vim +PlugInstall +qall
 fi
 
+# install starship
+if [ ! -f /usr/local/bin/starship ]; then
+    curl -sS https://starship.rs/install.sh | sh -s -y -- -b /usr/local/bin
+fi
+
