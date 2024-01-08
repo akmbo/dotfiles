@@ -55,6 +55,8 @@ config() {
 # don't show untracked files in dotfiles repo
 git -C $DOT_HOME config --local status.showUntrackedFiles no
 
-# initialize starship prompt
-eval "$(starship init bash)"
+# initialize starship prompt if installed
+if command -v starship &> /dev/null; then
+    eval "$(starship init bash)"
+fi
 
