@@ -1,31 +1,64 @@
 #!/bin/bash
 
-readonly DOTFILES_DIR="$HOME/dotfiles"
 readonly SCRIPT_DIR=$(dirname $(readlink -f "$0"))
+
+# default DOT_HOME to ~/dotfiles if not set
+if [ -z ${DOT_HOME+x} ]; then
+    DOT_DIR=$HOME/dotfiles
+fi
 
 # ============================================================================
 # Symlink files
 # ============================================================================
 
-# TODO: handle directories that already exist
-
 shopt -s dotglob
 
+echo
 echo "Symlinking files..."
 
-for file in $DOTFILES_DIR/home/*; do
+for file in $DOT_HOME/home/*; do
     filename=$(echo $file | rev | cut -d'/' -f-1 | rev)
-    ln -sf "$file" "$HOME"
+    target=$HOME/$filename
+
+    # check if the target file is already a symlink to the file
+    if [ "$(readlink $target)" = $file ]; then
+        echo "$filename is already symlinked."
+        continue
+    fi
+
+    # save target file if it already exists
+    if [ -e $target ]; then
+        echo "Moving existing $target to ~/dotfiles/.old/"
+        mkdir -p $DOT_HOME/.old && mv $target $_
+    fi
+
+    ln -s "$file" "$HOME"
     echo "Created symlink to $filename in home directory."
+
 done
 
-for file in $DOTFILES_DIR/config/*; do
+for file in $DOT_HOME/config/*; do
     filename=$(echo $file | rev | cut -d'/' -f-1 | rev)
-    ln -sf "$file" "$HOME/.config"
+    target=$HOME/.config/$filename
+
+    # check if the target file is already a symlink to the file
+    if [ "$(readlink $target)" = $file ]; then
+        echo "$filename is already symlinked."
+        continue
+    fi
+
+    # save target file if it already exists
+    if [ -e $target ]; then
+        echo "Moving existing $target to ~/dotfiles/.old/.config/"
+        mkdir -p $DOT_HOME/.old/.config && mv $target $_
+    fi
+
+    ln -s "$file" "$HOME/.config"
     echo "Created symlink to $filename in .config directory."
 done
 
 echo "...done."
+echo
 
 shopt -u dotglob
 
@@ -38,7 +71,8 @@ packages="exuberant-ctags"
 echo "Installing packages..."
 sudo apt-get update
 sudo apt-get -y --ignore-missing install $packages
-echo "...done"
+echo "...done."
+echo
 
 # install vim-plug
 if [ ! -f $HOME/.vim/autoload/plug.vim ]; then
