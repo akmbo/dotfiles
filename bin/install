@@ -65,7 +65,7 @@ echo
 # Install Packages
 # ============================================================================
 
-packages="curl vim exuberant-ctags"
+packages="curl vim nodejs ripgrep exuberant-ctags"
 
 echo "Installing packages..."
 sudo apt-get update
