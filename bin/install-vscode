@@ -1,0 +1,27 @@
+#!/bin/bash
+
+mkdir -p /tmp/install-vscode && cd $_
+
+wget https://update.code.visualstudio.com/latest/linux-x64/stable -O vscode.tar.gz
+tar -xvzf vscode.tar.gz
+
+vscode="VSCode-linux-x64"
+
+# check permissions of DOT_INSTALL_DIR
+if touch $DOT_INSTALL_DIR/share/.test_permission 2>/dev/null; then
+    rm $DOT_INSTALL_DIR/share/.test_permission
+    mv $vscode $DOT_INSTALL_DIR/share
+    ln -s $DOT_INSTALL_DIR/share/$vscode/code $DOT_INSTALL_DIR/bin
+else
+    sudo mv $vscode $DOT_INSTALL_DIR/share
+    sudo ln -s $DOT_INSTALL_DIR/share/$vscode/code $DOT_INSTALL_DIR/bin
+fi
+
+code --extensions-dir $HOME/.config/vscode/extensions
+
+code --install-extension catppuccin/vscode
+code --install-extension asvetliakov/vscode-neovim
+code --install-extension drcika/apc-extension
+code --install-extension VSpaceCode/vscode-which-key
+code --install-extension eamodio/vscode-toggle-excluded-files
+

@@ -1,10 +1,43 @@
-add_newline = false     # don't print a new line at the start of the prompt
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$python\
+$character"""
+
+add_newline = false
 
 [line_break]
-disabled = true         # make prompt a single line
+disabled = true
 
-[package]
-disabled = true         # disable the package module, hiding it from the prompt
+[git_branch]
+format = "[$branch]($style)"
+style = "red"
+
+[git_status]
+format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](255)($ahead_behind$stashed)]($style)"
+style = "yellow"
+conflicted = "​"
+untracked = "​"
+modified = "​"
+staged = "​"
+renamed = "​"
+deleted = "​"
+stashed = "≡"
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bright-black"
 
 [python]
+format = "[$virtualenv]"
 symbol = ""
+
+# alex@Workstation:~/dotfiles/bin$
+#
+# alex@Workstation:~/dotfiles/bin:git-main:py$
+#
+# [alex@Workstation:~/dotfiles/bin][git main][py]
