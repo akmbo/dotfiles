@@ -2,10 +2,13 @@
 # Environment Variables
 # ============================================================================
 
-export DOT_HOME=$HOME/dotfiles          # set path to dotfiles
+BASHRC_DIR="$(dirname $(realpath $BASH_SOURCE))"
 
-export EDITOR=vim                       # set preferred editor to vim
-export VISUAL=vim                       # set preferred visual editor to vim
+DOT_HOME="$(git -C "$BASHRC_DIR" rev-parse --show-toplevel)"
+XDG_CONFIG_HOME=$HOME/.config
+
+EDITOR=vim                       # set preferred editor to vim
+VISUAL=vim                       # set preferred visual editor to vim
 
 # ============================================================================
 # Functions
@@ -18,6 +21,14 @@ bconf() {
         [ $1 = "so" ] && source "$HOME/.bashrc"
     else
         "${EDITOR:-vi}" "$HOME/.bashrc"
+    fi
+}
+
+vconf() {
+    if [ $# -eq 1 ]; then
+        [ $1 = "so" ] && source "$HOME/.vim/vimrc"
+    else
+        "${EDITOR:-vi}" "$HOME/.vim/vimrc"
     fi
 }
 
@@ -40,14 +51,22 @@ dot() {
 }
 
 # ============================================================================
-# More
+# Load programs
 # ============================================================================
 
-# don't show untracked files in dotfiles repo
-git -C $DOT_HOME config --local status.showUntrackedFiles no
+# load nvm
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 # initialize starship prompt if installed
 if command -v starship &> /dev/null; then
     eval "$(starship init bash)"
 fi
+
+# ============================================================================
+# More
+# ============================================================================
+
+# don't show untracked files in dotfiles repo
+git -C $DOT_HOME config --local status.showUntrackedFiles no
 
