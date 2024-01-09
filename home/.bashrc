@@ -4,11 +4,13 @@
 
 BASHRC_DIR="$(dirname $(realpath $BASH_SOURCE))"
 
-DOT_HOME="$(git -C "$BASHRC_DIR" rev-parse --show-toplevel)"
-XDG_CONFIG_HOME=$HOME/.config
+export DOT_HOME="$(git -C "$BASHRC_DIR" rev-parse --show-toplevel)"
+export DOT_INSTALL_DIR="$HOME/.local"
 
-EDITOR=vim                       # set preferred editor to vim
-VISUAL=vim                       # set preferred visual editor to vim
+export XDG_CONFIG_HOME="$HOME/.config"
+
+export EDITOR=vim                       # set preferred editor to vim
+export VISUAL=vim                       # set preferred visual editor to vim
 
 # ============================================================================
 # Functions

@@ -1,0 +1,126 @@
+#!/bin/bash
+
+# TODO: make verbose mode do something
+# TODO: ability to uninstall
+# TODO: make sure vscode actually works
+
+# ============================================================================
+# Handle Flags
+# ============================================================================
+
+AVAILABLE_PACKAGES="vscode starship"
+
+PACKAGES=""
+VERBOSE=false
+INS_DIR=$DOT_INSTALL_DIR
+TMP_INSTALL="/tmp/dot-install-$(date +%s)"
+
+usage() {
+  echo "Usage: $0 [OPTIONS]"
+  echo "Options:"
+  echo " -h, --help     Display this help message"
+  echo " -l, --list     Display available packages"
+  echo " -t, --target   Specify install directory"
+  echo " -v, --verbose  Display more information"
+}
+
+if [[ $# -eq 0 ]]; then
+    usage
+    exit 0
+fi
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    -l | --list)
+      echo $AVAILABLE_PACKAGES
+      exit 0
+      ;;
+    -v | --versbose)
+      VERBOSE=true
+      ;;
+    -t | --target)
+      if [[ -z "$2" || "$2" == -* ]]; then
+        echo "Tag not specified."
+        exit 1
+      fi
+      INS_DIR=$(realpath "$2")
+      shift
+      ;;
+    *)
+      if [[ "$1" == -* ]]; then
+        echo "Invalid option: $1"
+        usage
+        exit 1
+      elif [[ ! $AVAILABLE_PACKAGES =~ (^|[[:space:]])$1($|[[:space:]]) ]]; then
+        echo "Can't find package $1"
+        exit 1
+      fi
+        PACKAGES+="$1 "
+      ;;
+  esac
+  shift
+done
+
+if [[ ! -d $INS_DIR || -z $INS_DIR ]]; then
+    echo "Directory $INS_DIR doesn't exist"
+    exit 1
+fi
+
+if touch $INS_DIR/.test_permission 2>/dev/null; then
+  rm $INS_DIR/.test_permission
+else
+  sudo "$0" "$@"
+  exit $?
+fi
+
+# ============================================================================
+# Install packages
+# ============================================================================
+
+mkdir -p $INS_DIR/share
+mkdir -p $INS_DIR/bin
+mkdir -p $TMP_INSTALL
+
+for package in $PACKAGES; do
+
+  # ==========================================================================
+  # Install vscode
+  # ==========================================================================
+
+  if [ $package = "vscode" ]; then
+
+    cd $TMP_INSTALL
+
+    wget https://update.code.visualstudio.com/latest/linux-x64/stable -O vscode.tar.gz
+    tar -xvzf vscode.tar.gz
+
+    mv "VSCode-linux-x64" $INS_DIR/share
+    ln -s $INS_DIR/share/"VSCode-linux-x64"/code $INS_DIR/bin
+
+    bin_path=$INS_DIR/bin/code
+
+    $bin_path --extensions-dir $HOME/.config/vscode/extensions
+
+    $bin_path --install-extension Catppuccin.catppuccin-vsc
+    $bin_path --install-extension asvetliakov.vscode-neovim
+    $bin_path --install-extension drcika.apc-extension
+    $bin_path --install-extension VSpaceCode.whichkey
+    $bin_path --install-extension amodio.toggle-excluded-files
+
+  # ==========================================================================
+  # Install starship
+  # ==========================================================================
+
+  elif [ $package = "starship" ]; then
+
+    # doesn't install in INS_DIR yet
+    curl -sS https://starship.rs/install.sh | sh
+
+  fi
+done
+
+
