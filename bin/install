@@ -55,6 +55,9 @@ for file in $DOT_HOME/config/*; do
     move_and_backup $file $XDG_CONFIG_HOME $DOT_HOME/.old/.config
 done
 
+mkdir -p $HOME/.local/bin
+move_and_backup $DOT_HOME/bin/dotpm $HOME/.local/bin/ $DOT_HOME/.old
+
 echo "...done."
 echo
 
@@ -62,7 +65,7 @@ echo
 # Install Packages
 # ============================================================================
 
-packages="curl vim-gtk3  ripgrep exuberant-ctags"
+packages="curl wget vim-gtk3  ripgrep exuberant-ctags"
 
 echo "Installing packages..."
 
