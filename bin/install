@@ -1,11 +1,16 @@
 #!/bin/bash
 
-readonly SCRIPT_DIR=$(dirname $(readlink -f "$0"))
+readonly SCRIPT_DIR="$(dirname $(realpath $BASH_SOURCE))"
 
-# default DOT_HOME to ~/dotfiles if not set
-if [ -z ${DOT_HOME+x} ]; then
-    DOT_HOME=$HOME/dotfiles
+if [ -z ${XDG_CONFIG_HOME+x} ]; then
+    XDG_CONFIG_HOME=$HOME/.config
 fi
+
+if [ -z ${DOT_HOME+x} ]; then
+    DOT_HOME="$(git -C $SCRIPT_DIR rev-parse --show-toplevel)"
+fi
+
+mkdir -p $XDG_CONFIG_HOME
 
 # ============================================================================
 # Symlink Files
@@ -14,48 +19,40 @@ fi
 # include hidden files in search
 GLOBIGNORE=".:.."
 
+move_and_backup() {
+    local file=$1
+    local target_dir=$2
+    local backup_dir=$3
+
+    local filename=$(echo $file | rev | cut -d'/' -f-1 | rev)
+    local target=$2/$filename
+
+    # check if the target file is already a symlink to the file
+    if [ "$(readlink "$target")" = $file ]; then
+        echo "$filename is already symlinked."
+        return 0
+    fi
+    # backup target file if it already exists
+    if [ -e $target ]; then
+        # remove previous backup
+        [ -e "$backup_dir/$filename" ] && rm -r "$backup_dir/$filename"
+        echo "Moving existing $target to $backup_dir"
+        mkdir -p $backup_dir && mv $target $_
+    fi
+
+    ln -s $file $target
+    echo "Created symlink to $filename in $target_dir"
+}
+
 echo
 echo "Symlinking files..."
 
 for file in $DOT_HOME/home/*; do
-    filename=$(echo $file | rev | cut -d'/' -f-1 | rev)
-    target=$HOME/$filename
-
-    # check if the target file is already a symlink to the file
-    if [ "$(readlink "$target")" = $file ]; then
-        echo "$filename is already symlinked."
-        continue
-    fi
-
-    # save target file if it already exists
-    if [ -e $target ]; then
-        echo "Moving existing $target to ~/dotfiles/.old/"
-        mkdir -p $DOT_HOME/.old && mv $target $_
-    fi
-
-    ln -s "$file" "$HOME"
-    echo "Created symlink to $filename in home directory."
-
+    move_and_backup $file $HOME $DOT_HOME/.old
 done
 
 for file in $DOT_HOME/config/*; do
-    filename=$(echo $file | rev | cut -d'/' -f-1 | rev)
-    target=$HOME/.config/$filename
-
-    # check if the target file is already a symlink to the file
-    if [ "$(readlink "$target")" = $file ]; then
-        echo "$filename is already symlinked."
-        continue
-    fi
-
-    # save target file if it already exists
-    if [ -e $target ]; then
-        echo "Moving existing $target to ~/dotfiles/.old/.config/"
-        mkdir -p $DOT_HOME/.old/.config && mv $target $_
-    fi
-
-    ln -s "$file" "$HOME/.config"
-    echo "Created symlink to $filename in .config directory."
+    move_and_backup $file $XDG_CONFIG_HOME $DOT_HOME/.old/.config
 done
 
 echo "...done."
@@ -65,11 +62,22 @@ echo
 # Install Packages
 # ============================================================================
 
-packages="curl vim nodejs ripgrep exuberant-ctags"
+packages="curl vim-gtk3  ripgrep exuberant-ctags"
 
 echo "Installing packages..."
+
 sudo apt-get update
 sudo apt-get -y --ignore-missing install $packages
+
+# install nvm
+if [ ! -e "$XDG_CONFIG_HOME/nvm" ]; then
+    mkdir "$XDG_CONFIG_HOME/nvm"
+    PROFILE=/dev/null bash -c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash"
+fi
+
 echo "...done."
+echo
+
+echo "source ~/.bashrc to finalize changes."
 echo
 
