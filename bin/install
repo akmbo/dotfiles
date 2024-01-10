@@ -2,11 +2,11 @@
 
 readonly SCRIPT_DIR="$(dirname $(realpath $BASH_SOURCE))"
 
-if [ -z ${XDG_CONFIG_HOME+x} ]; then
+if [ -z ${XDG_CONFIG_HOME} ]; then
     XDG_CONFIG_HOME=$HOME/.config
 fi
 
-if [ -z ${DOT_HOME+x} ]; then
+if [ -z ${DOT_HOME} ]; then
     DOT_HOME="$(git -C $SCRIPT_DIR rev-parse --show-toplevel)"
 fi
 
@@ -33,7 +33,7 @@ move_and_backup() {
         return 0
     fi
     # backup target file if it already exists
-    if [ -e $target ]; then
+    if [[ -e $target || -L $target ]]; then
         # remove previous backup
         [ -e "$backup_dir/$filename" ] && rm -r "$backup_dir/$filename"
         echo "Moving existing $target to $backup_dir"
@@ -65,7 +65,7 @@ echo
 # Install Packages
 # ============================================================================
 
-packages="curl wget vim-gtk3  ripgrep exuberant-ctags"
+packages="curl wget vim-gtk3 ripgrep exuberant-ctags"
 
 echo "Installing packages..."
 
