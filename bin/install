@@ -65,7 +65,8 @@ echo
 # Install Packages
 # ============================================================================
 
-packages="curl wget vim-gtk3 ripgrep exuberant-ctags"
+packages="curl wget"
+# vim-gtk3 ripgrep exuberant-ctags
 
 echo "Installing packages..."
 
