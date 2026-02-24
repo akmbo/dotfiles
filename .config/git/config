@@ -1,0 +1,7 @@
+[init]
+    defaultBranch = main
+[user]
+    email = 67482112+akmbo@users.noreply.github.com
+    name = akmbo
+[pull]
+    rebase = true
