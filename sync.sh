@@ -17,4 +17,7 @@ rsync -av \
     --exclude='.config/git/config' \
     "$src" ./
 
+git config user.name "akmbo"
+git config user.email "67482112+akmbo@users.noreply.github.com"
+
 echo "done."
