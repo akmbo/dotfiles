@@ -12,7 +12,6 @@ set encoding=utf-8          " use utf-8 encoding
 set cursorline              " highlight current line
 set nocompatible            " stop vim from behaving like vi
 set ttimeoutlen=50          " sets key code sequence timeout to 50ms
-set clipboard=unnamedplus   " sets default clipboard to the system clipboard
 set fileformat=unix         " use unix-style line endings
 set hlsearch                " enable search highlighting
 set splitbelow splitright   " split new windows to left or right
