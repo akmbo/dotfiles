@@ -14,6 +14,7 @@ fi
 rsync -av \
     --exclude='.git/' \
     --exclude='README.md' \
+    --exclude='symlink_list.txt' \
     --exclude='.config/git/config' \
     "$src" ./
 

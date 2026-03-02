@@ -29,12 +29,15 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
 sudo ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 sudo dpkg-reconfigure -f noninteractive tzdata
 
-if [ ! -f "/usr/bin/fdfind" ]; then
+if [ -f "/usr/bin/fdfind" ] && [ ! -f "/usr/local/bin/fd" ]; then
     sudo ln -s /usr/bin/fdfind /usr/local/bin/fd
 fi
 
 # create local directories
 mkdir -p "$HOME/.local/bin" "$HOME/.local/share"
+
+# load local bin
+PATH="$HOME/.local/bin:$PATH"
 
 # install fzf
 if [ ! -f "$HOME/.local/bin/fzf" ]; then
@@ -54,16 +57,5 @@ if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
 
-# create dotfile tree in $HOME
-find . \
-    -path './.git*' -prune -o \
-    -path './.*' -type d -exec bash -c \
-    'name=${1#*/}; mkdir -p "$HOME/$name";
-    echo "created directory $name"' _ {} \;
-
-# symlink dotfiles
-find . \
-    -path './.git*' -prune -o \
-    -path './.*' -type f -exec bash -c \
-    'name=${1#*/}; ln -sf $(realpath $name) "$HOME/$name";
-    echo "symlinked $name"' _ {} \;
+# symlink files
+./symlink.sh --select-all
