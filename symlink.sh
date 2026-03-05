@@ -12,8 +12,13 @@ elif [ "${1:-}" == "--select-all" ]; then
     select_all=1
 fi
 
+check_cmd() {
+    command -v "$1" >/dev/null 2>&1
+    return $?
+}
+
 need_cmd() {
-    if ! command -v "$1" >/dev/null 2>&1; then
+    if ! check_cmd "$1"; then
         echo "need '$1' (command not found)" >&2
         exit 1
     fi
@@ -25,10 +30,15 @@ find_symlink_candidates() {
 }
 
 ask_selection() {
+    local preview='cat'
+    if check_cmd bat; then
+        preview='bat --style=numbers --color=always --line-range=:500'
+    fi
     find_symlink_candidates \
         | fzf -m --bind "load:toggle-all" --bind "ctrl-a:toggle-all" \
             --header "(tab to deselect, ctrl-a to toggle all)" \
-            --border rounded --border-label "Select files to symlink"
+            --height ~100% --layout reverse --padding 0,0,1,0 \
+            --preview "$preview {}"
 }
 
 git_exclude_file() {
@@ -52,6 +62,7 @@ if [ ! -f "$selection_file" ] || ((force_selection)); then
         exit 0
     fi
     echo "$selected" > "$selection_file"
+    echo "selection saved to $(realpath "$selection_file")"
 fi
 
 while IFS= read -r f; do

@@ -24,13 +24,18 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     "tzdata" \
     "tmux" \
     "ripgrep" \
-    "fd-find"
+    "fd-find" \
+    "bat"
 
 sudo ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 sudo dpkg-reconfigure -f noninteractive tzdata
 
 if [ -f "/usr/bin/fdfind" ] && [ ! -f "/usr/local/bin/fd" ]; then
     sudo ln -s /usr/bin/fdfind /usr/local/bin/fd
+fi
+
+if [ -f "/usr/bin/batcat" ] && [ ! -f "/usr/local/bin/bat" ]; then
+    sudo ln -s /usr/bin/batcat /usr/local/bin/bat
 fi
 
 # create local directories
