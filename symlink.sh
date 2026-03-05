@@ -25,12 +25,10 @@ find_symlink_candidates() {
 }
 
 ask_selection() {
-    local dst="$1"
     find_symlink_candidates \
         | fzf -m --bind "load:toggle-all" --bind "ctrl-a:toggle-all" \
             --header "(tab to deselect, ctrl-a to toggle all)" \
-            --border rounded --border-label "Select files to symlink" \
-        > "$dst"
+            --border rounded --border-label "Select files to symlink"
 }
 
 git_exclude_file() {
@@ -48,7 +46,12 @@ if ((select_all)); then
 fi
 
 if [ ! -f "$selection_file" ] || ((force_selection)); then
-    ask_selection "$selection_file"
+    selected="$(ask_selection)"
+    if [ -z "$selected" ]; then
+        # user likely ran ctrl+c
+        exit 0
+    fi
+    echo "$selected" > "$selection_file"
 fi
 
 while IFS= read -r f; do
