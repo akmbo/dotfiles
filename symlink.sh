@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 set -eou pipefail
 
-selection_file="symlink_list.txt"
+selection_file="$(mktemp)"
 symlink_dst="$HOME"
-force_selection=0
 select_all=0
 
-if [ "${1:-}" == "--select" ]; then
-    force_selection=1
-elif [ "${1:-}" == "--select-all" ]; then
+if [ "${1:-}" == "--select-all" ]; then
     select_all=1
 fi
 
@@ -41,28 +38,18 @@ ask_selection() {
             --preview "$preview {}"
 }
 
-git_exclude_file() {
-    local src="$1"
-    if ! grep -qFx "$src" ".git/info/exclude"; then
-        echo "$src" >> .git/info/exclude
-    fi
-}
-
 need_cmd fzf
 need_cmd fd
 
 if ((select_all)); then
     find_symlink_candidates > "$selection_file"
-fi
-
-if [ ! -f "$selection_file" ] || ((force_selection)); then
+else
     selected="$(ask_selection)"
     if [ -z "$selected" ]; then
         # user likely ran ctrl+c
         exit 0
     fi
     echo "$selected" > "$selection_file"
-    echo "selection saved to $(realpath "$selection_file")"
 fi
 
 while IFS= read -r f; do
@@ -76,4 +63,4 @@ while IFS= read -r f; do
     echo "symlinked $f"
 done < "$selection_file"
 
-git_exclude_file "$selection_file"
+rm "$selection_file"
