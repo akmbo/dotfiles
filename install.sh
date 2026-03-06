@@ -22,7 +22,6 @@ need_cmd wget
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     "tzdata" \
-    "tmux" \
     "ripgrep" \
     "fd-find" \
     "bat"
@@ -43,6 +42,13 @@ mkdir -p "$HOME/.local/bin" "$HOME/.local/share"
 
 # load local bin
 PATH="$HOME/.local/bin:$PATH"
+
+# install tmux
+if [ ! -f "$HOME/.local/bin/tmux" ]; then
+    wget -P "$HOME/.local/bin" "https://github.com/tmux/tmux-builds/releases/download/v3.6a/tmux-3.6a-linux-x86_64.tar.gz"
+    tar -xzf "$HOME/.local/bin/tmux-3.6a-linux-x86_64.tar.gz" -C "$HOME/.local/bin"
+    rm "$HOME/.local/bin/tmux-3.6a-linux-x86_64.tar.gz"
+fi
 
 # install fzf
 if [ ! -f "$HOME/.local/bin/fzf" ]; then
