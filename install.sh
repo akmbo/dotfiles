@@ -68,5 +68,9 @@ if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
 
+# TODO: install cargo and tree-sitter-cli (requires libclang-dev)
+# sudo apt install -y libclang-dev
+# cargo install --locked tree-sitter-cli
+
 # symlink files
 ./symlink.sh --select-all
