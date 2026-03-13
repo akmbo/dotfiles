@@ -24,7 +24,8 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     "tzdata" \
     "ripgrep" \
     "fd-find" \
-    "bat"
+    "bat" \
+    "libclang-dev"
 
 sudo ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 sudo dpkg-reconfigure -f noninteractive tzdata
