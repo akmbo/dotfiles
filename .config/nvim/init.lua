@@ -136,7 +136,6 @@ vim.pack.add({
   "https://github.com/lewis6991/gitsigns.nvim",
 })
 
-vim.cmd.colorscheme("catppuccin-nvim")
 require("catppuccin").setup({
   flavour = "mocha",
   lsp_styles = {
@@ -149,6 +148,7 @@ require("catppuccin").setup({
   },
   aut_integrations = true,
 })
+vim.cmd.colorscheme("catppuccin-nvim")
 
 require("mason").setup({
   ensure_installed = { "lua_ls" },
