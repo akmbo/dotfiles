@@ -146,7 +146,14 @@ require("catppuccin").setup({
       information = { "undercurl" },
     },
   },
-  aut_integrations = true,
+  integrations = {
+    mason = true,
+    fzf = true,
+    blink_cmp = {
+      style = "bordered",
+    },
+    gitsigns = true,
+  },
 })
 vim.cmd.colorscheme("catppuccin-nvim")
 
@@ -161,6 +168,10 @@ require("conform").setup({
   },
   formatters_by_ft = {
     lua = { "stylua" },
+    python = {
+      "ruff_fix",
+      "ruff_format",
+    },
   },
 })
 
@@ -176,9 +187,9 @@ require("blink.cmp").setup({
 
 -- plugin keymaps
 
-vim.keymap.set("n", "ff", function()
+vim.keymap.set("n", "<leader>sf", function()
   require("fzf-lua").files()
-end, { desc = "[F]ind [f]iles" })
+end, { desc = "[S]search [f]iles" })
 
 -- =============================================================================
 -- LSP
@@ -197,4 +208,7 @@ vim.lsp.config("lua_ls", {
   },
 })
 
-vim.lsp.enable({ "lua_ls" })
+vim.lsp.enable({
+  "lua_ls",
+  "ty",
+})
