@@ -134,6 +134,7 @@ vim.pack.add({
   "https://github.com/rafamadriz/friendly-snippets",
   { src = "https://github.com/saghen/blink.cmp", vim.version.range("1.x") },
   "https://github.com/lewis6991/gitsigns.nvim",
+  "https://github.com/tpope/vim-sleuth",
 })
 
 require("catppuccin").setup({
