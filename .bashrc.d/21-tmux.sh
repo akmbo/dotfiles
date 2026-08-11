@@ -6,5 +6,9 @@ tm() {
     if [[ -n "${1-}" ]]; then
         tmux $change -t "$1" 2>/dev/null || (tmux new-session -d -s "$1" && tmux $change -t "$1"); return
     fi
+    if ! tmux list-sessions &>/dev/null; then
+        tmux new-session -d -s default && tmux $change -t default
+        return
+    fi
     session=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | fzf --exit-0) && tmux $change -t "$session" || echo "No sessions found."
 }
