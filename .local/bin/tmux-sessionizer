@@ -245,7 +245,10 @@ find_dirs() {
         # original:
         # [[ -d "$path" ]] && find "$path" -mindepth 1 -maxdepth "${depth:-${TS_MAX_DEPTH:-1}}" -path '*/.git' -prune -o -type d -print
         # edit (only find top-level git repos):
-        [[ -d "$path" ]] && find "$path" -mindepth 1 -maxdepth "$depth" -type d -exec test -d "{}/.git" \; -print
+        # Use -name .git instead of -exec test to avoid spawning a process per directory,
+        # which is extremely slow on EC2/t3.xlarge (took ~20s vs ~0.03s).
+        local max_depth="${depth:-${TS_MAX_DEPTH:-1}}"
+        [[ -d "$path" ]] && find "$path" -mindepth 2 -maxdepth "$((max_depth + 1))" -name .git -type d -printf '%h\n'
     done
 }
 
